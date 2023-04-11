@@ -43,7 +43,7 @@ def encoding(list):
         sum = sum + map(list[i])*(37**(4-i))
     return sum
 
-
+# print(encoding("     "))
 
 ###########################################
 # calc power mod number for large numbers
@@ -77,32 +77,75 @@ def PowMod(a, n, mod):
 
 
 ###########################################
-# generate encryption key from q and p
+# generate encryption key from n and phi(n)
 ###########################################
 def keys_generation(n, phi_n):
     e=random.randint(2,phi_n)
     while sp.gcd(e,phi_n) != 1:
         e=random.randint(2,phi_n) 
 
-    # c = PowMod(ori_m,e,n)
-
     d=sp.mod_inverse(e,phi_n)
 
-    # m = PowMod(c,d,n)
-    
-    # print(decoding(ori_m),decoding(m))
     return e, d
     
 
-def n_generation():
-    def rand_prime():
-        while True:
-            p = random.randrange(9001, 10000, 2)
-            if all(p % n != 0 for n in range(3, int((p ** 0.5) + 1), 2)):
-                return p
 
-    p = rand_prime()
-    q = rand_prime()
+###########################################
+# generate two large primes q and p then get n and phi(n)
+###########################################
+def n_generation(n_bits):
+    # def rand_prime():
+    #     while True:
+    #         p = random.randrange(n_bits, n_bits+1000, 2)
+    #         if all(p % n != 0 for n in range(3, int((p ** 0.5) + 1), 2)):
+    #             return p
+
+    # p = rand_prime()
+    # q = rand_prime()
+    # while p == q:
+    #     q = rand_prime()
+
+    p = number.getPrime(n_bits // 2)
+    q = number.getPrime(n_bits // 2)
     while p == q:
-        q = rand_prime()
+        q = number.getPrime(n_bits // 2)
+        
     return p*q , (p-1)*(q-1)
+
+# p, q = n_generation(28)
+# print(p,q)
+# print(p*q)
+
+
+def isPrime(n):
+      
+    # Corner case
+    if n <= 1 :
+        return False
+  
+    # check from 2 to n-1
+    for i in range(2, n):
+        if n % i == 0:
+            return False
+  
+    return True
+
+list = []
+def printPrime(n):
+    for i in range(2, n + 1):
+        if isPrime(i):
+            list.append(i)
+printPrime(226791289 // 2)
+
+###########################################
+# attack plain-cipher pairs
+###########################################
+def attack(plain, cipher, n, pu):
+    for x in list:
+        for y in list:
+            new_n = x*y
+            if cipher == PowMod(plain, pu, new_n):
+                return x, y, sp.mod_inverse(pu,(x-1)*(y-1)), new_n
+
+x, y, pr, n = attack(encoding("hello"), 20265125, 226791289, 142671923)
+print("n = ", n)

@@ -20,22 +20,24 @@ print ("socket binded to %s" %(port))
  
 # put the socket into listening mode
 s.listen(5)    
-print ("socket is listening")           
+print ("socket is listening")  
+
+# Establish connection with client.
+c, addr = s.accept()    
+print ('Got connection from', addr )
+
+pu = int(c.recv(1024).decode())
+n = int(c.recv(1024).decode())
+print("pu =",pu)
+
  
 # a forever loop until we interrupt it or
 # an error occurs
-while True:
- 
-    # Establish connection with client.
-    c, addr = s.accept()    
-    print ('Got connection from', addr )
+text = ""
+while text != "exit":
+    text = input('Enter your message:')
+    x = text
     
-    pu = int(c.recv(1024).decode())
-    n = int(c.recv(1024).decode())
-    print("pu =",pu)
-
-    x = input('Enter your message:')
-
     while len(x)%5 != 0:
         x = x + ' '    
         
@@ -44,10 +46,8 @@ while True:
     for i in range(0, len(x), 5):
         m = encoding(x[i:i+5])
         cipher = PowMod(m,pu,n)
+        print(cipher)
         c.send(str(cipher).encode())
 
-    # Close the connection with the client
-    c.close()
-    
-    # Breaking once connection closed
-    break
+# Close the connection with the client
+c.close()
