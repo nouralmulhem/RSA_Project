@@ -1,46 +1,52 @@
 import socket
 import threading
+from utilities import *
 
-socketServer = socket.socket()
+socketServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 host = socket.gethostname()
 port = 5000
 
 socketServer.bind((host, port))
 
-socketServer.listen(2)
+socketServer.listen(1)
 
 conn1, address1 = socketServer.accept()
 
-# def send():
-#     while(data != "exit"):
-#         data = input()
-#         conn1.send(data.encode())
+p, q, n, phi = n_generation(28)
+print("n = ", n, "p = ", p, "q = ", q )
 
-# def receive():
-#     while(data != "exit"):
-#         data = conn1.recv(512).decode()
-#         print("=> ", data)
+pu, pr = keys_generation(n, phi)
+print("pu = ", pu, "pr = ", pr )
 
-# t1 = threading.Thread(target = send)
-# t2 = threading.Thread(target = receive)
-
-# t1.start()
-# t2.start()
-
-# t1.join()
-# t2.join()
+pu_rec, n_rec = receiveKey(conn1)
+# print("pu received =", pu_rec ,"n received = ", n_rec)
+sendKey(conn1, pu, n)
+# print("pu sent =", pu ,"n sent = ", n)
 
 
-conn2, address2 = socketServer.accept()
+# pu_rec = 0
+# n_rec = 0
 
-def send(fromConnection, toConnection):
-    while(True):
-        data = fromConnection.recv(512).decode()
-        toConnection.send(data.encode())
+def send():
+    data = ""
+    
+    while(data != "!exit"):
+        data = input()
+        sendCipher(conn1, pu_rec, n_rec, data)
 
-t1 = threading.Thread(target = send, args = (conn1, conn2))
-t2 = threading.Thread(target = send, args = (conn2, conn1))
+def receive():
+    msg = ""
+    # global pu_rec
+    # global n_rec
+    
+    
+    while(msg != "exit"):
+        msg = receiveMessage(conn1, pr, n)
+        print("=> ", msg)
+
+t1 = threading.Thread(target = send)
+t2 = threading.Thread(target = receive)
 
 t1.start()
 t2.start()
@@ -48,5 +54,3 @@ t2.start()
 t1.join()
 t2.join()
 
-conn1.close()
-conn2.close()

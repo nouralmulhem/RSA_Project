@@ -3,6 +3,8 @@ import random
 import numpy as np
 import sympy as sp
 import math
+import json
+
 
 
 ###########################################
@@ -43,7 +45,6 @@ def encoding(list):
         sum = sum + map(list[i])*(37**(4-i))
     return sum
 
-# print(encoding("     "))
 
 ###########################################
 # calc power mod number for large numbers
@@ -61,19 +62,6 @@ def PowMod(a, n, mod):
         else:
           return b * a % mod
         
-
-
-
-# ##########################################
-# # divide message into 5 char chunks and encode each 5 charcters and perform encoding (then check if encoding is right by decoding the message again)
-# ###########################################
-# def crypting(text, pu, n):
-#     while len(text)%5 != 0:
-#         text = text + ' '
-#     chunks = [PowMod(encoding(text[i:i+5]),pu,n) for i in range(0, len(text), 5)]
-#     return chunks
-    
-
 
 
 ###########################################
@@ -94,27 +82,12 @@ def keys_generation(n, phi_n):
 # generate two large primes q and p then get n and phi(n)
 ###########################################
 def n_generation(n_bits):
-    # def rand_prime():
-    #     while True:
-    #         p = random.randrange(n_bits, n_bits+1000, 2)
-    #         if all(p % n != 0 for n in range(3, int((p ** 0.5) + 1), 2)):
-    #             return p
-
-    # p = rand_prime()
-    # q = rand_prime()
-    # while p == q:
-    #     q = rand_prime()
-
     p = number.getPrime(n_bits // 2)
     q = number.getPrime(n_bits // 2)
     while p == q:
         q = number.getPrime(n_bits // 2)
         
     return p, q, p*q , (p-1)*(q-1)
-
-# p, q = n_generation(28)
-# print(p,q)
-# print(p*q)
 
 
 def isPrime(n):
@@ -149,3 +122,36 @@ def attack(plain, cipher, n, pu):
 
 # x, y, pr, n = attack(encoding("hello"), 20265125, 226791289, 142671923)
 # print("n = ", n)
+
+
+def sendCipher(socket, pu, n, data):
+    while len(data)%5 != 0:
+            data = data + ' '    
+        
+    socket.send(str(len(data)/5).encode())
+
+    for i in range(0, len(data), 5):
+        m = encoding(data[i:i+5])
+        cipher = PowMod(m,pu,n)
+        socket.send(str(cipher).encode())
+        
+
+def receiveMessage(socket, pr, n):
+    len = int(float(socket.recv(1024).decode()))
+
+    mes = ""
+    for i in range(len):
+        cipher = int(float(socket.recv(1024).decode()))
+        m = PowMod(cipher,pr,n)
+        mes += decoding(m)
+        
+    return mes
+
+def sendKey(socket, pu, n):
+    msg = [pu, n]
+    socket.send(json.dumps(msg).encode())
+
+def receiveKey(socket):
+    pu_rec, n_rec = json.loads(socket.recv(1024).decode())
+    return pu_rec, n_rec
+

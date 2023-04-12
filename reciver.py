@@ -11,7 +11,7 @@ port = 12346
 # connect to the server on local computer
 s.connect(('127.0.0.1', port))
 
-p, q, n, phi = n_generation(28)
+p, q, n, phi = n_generation(50)
 print("n = ", n, "p = ", p, "q = ", q )
 
 pu, pr = keys_generation(n, phi)
