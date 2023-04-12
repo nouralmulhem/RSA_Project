@@ -9,44 +9,22 @@ port = 5000
 
 socketServer.bind((host, port))
 
-socketServer.listen(1)
+# we are listening to two clients at a time
+socketServer.listen(2)
 
+# get connection with two clients
 conn1, address1 = socketServer.accept()
+conn2, address2 = socketServer.accept()
 
-p, q, n, phi = n_generation(28)
-print("n = ", n, "p = ", p, "q = ", q )
+# this function send data from one client to another using the connections of both
+# clients obtained before
+def send(fromConnection, toConnection):
+    while(True):
+        data = fromConnection.recv(1024).decode()
+        toConnection.send(data.encode())
 
-pu, pr = keys_generation(n, phi)
-print("pu = ", pu, "pr = ", pr )
-
-pu_rec, n_rec = receiveKey(conn1)
-# print("pu received =", pu_rec ,"n received = ", n_rec)
-sendKey(conn1, pu, n)
-# print("pu sent =", pu ,"n sent = ", n)
-
-
-# pu_rec = 0
-# n_rec = 0
-
-def send():
-    data = ""
-    
-    while(data != "!exit"):
-        data = input()
-        sendCipher(conn1, pu_rec, n_rec, data)
-
-def receive():
-    msg = ""
-    # global pu_rec
-    # global n_rec
-    
-    
-    while(msg != "exit"):
-        msg = receiveMessage(conn1, pr, n)
-        print("=> ", msg)
-
-t1 = threading.Thread(target = send)
-t2 = threading.Thread(target = receive)
+t1 = threading.Thread(target = send, args = (conn1, conn2))
+t2 = threading.Thread(target = send, args = (conn2, conn1))
 
 t1.start()
 t2.start()
@@ -54,3 +32,5 @@ t2.start()
 t1.join()
 t2.join()
 
+conn1.close()
+conn2.close()

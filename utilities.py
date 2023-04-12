@@ -47,7 +47,7 @@ def encoding(list):
 
 
 ###########################################
-# calc power mod number for large numbers
+# calc power mod number for large numbers using eculidean algorithm
 ###########################################
 def PowMod(a, n, mod): 
     if n == 0:
@@ -67,14 +67,14 @@ def PowMod(a, n, mod):
 ###########################################
 # generate encryption key from n and phi(n)
 ###########################################
-def keys_generation(n, phi_n):
-    e=random.randint(2,phi_n)
-    while sp.gcd(e,phi_n) != 1:
-        e=random.randint(2,phi_n) 
+def keys_generation(phi_n):
+    public_key = random.randint(2,phi_n)
+    while sp.gcd(public_key,phi_n) != 1:
+        public_key=random.randint(2,phi_n) 
 
-    d=sp.mod_inverse(e,phi_n)
+    private_key=sp.mod_inverse(public_key,phi_n)
 
-    return e, d
+    return public_key, private_key
     
 
 
@@ -90,40 +90,11 @@ def n_generation(n_bits):
     return p, q, p*q , (p-1)*(q-1)
 
 
-def isPrime(n):
-      
-    # Corner case
-    if n <= 1 :
-        return False
-  
-    # check from 2 to n-1
-    for i in range(2, n):
-        if n % i == 0:
-            return False
-  
-    return True
 
-list = []
-def printPrime(n):
-    for i in range(2, n + 1):
-        if isPrime(i):
-            list.append(i)
-# printPrime(226791289 // 2)
 
 ###########################################
-# attack plain-cipher pairs
+# sending encrypted packets one by one and receive the message
 ###########################################
-def attack(plain, cipher, n, pu):
-    for x in list:
-        for y in list:
-            new_n = x*y
-            if cipher == PowMod(plain, pu, new_n):
-                return x, y, sp.mod_inverse(pu,(x-1)*(y-1)), new_n
-
-# x, y, pr, n = attack(encoding("hello"), 20265125, 226791289, 142671923)
-# print("n = ", n)
-
-
 def sendCipher(socket, pu, n, data):
     while len(data)%5 != 0:
             data = data + ' '    
@@ -147,9 +118,15 @@ def receiveMessage(socket, pr, n):
         
     return mes
 
+
+
+###########################################
+# send and receive the public key first
+###########################################
 def sendKey(socket, pu, n):
     msg = [pu, n]
     socket.send(json.dumps(msg).encode())
+
 
 def receiveKey(socket):
     pu_rec, n_rec = json.loads(socket.recv(1024).decode())

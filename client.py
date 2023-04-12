@@ -16,28 +16,16 @@ pu, pr = keys_generation(n, phi)
 print("pu = ", pu, "pr = ", pr )
 
 sendKey(socketClient, pu, n)
-# print("pu sent =", pu ,"n sent = ", n)
 pu_rec, n_rec = receiveKey(socketClient)
-# print("pu received =", pu_rec ,"n received = ", n_rec)
-
-
-# pu_rec = 0
-# n_rec = 0
 
 def send():
     data = ""
-    
-    
     while(data != "!exit"):
         data = input()
         sendCipher(socketClient, pu_rec, n_rec, data)
 
 def receive():
     msg = ""
-    # global pu_rec
-    # global n_rec
-    
-    
     while(msg != "exit"):
         msg = receiveMessage(socketClient, pr, n)
         print("=> ", msg)
