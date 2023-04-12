@@ -5,14 +5,14 @@ from utilities import *
 socketClient = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 host = socket.gethostname()
-port = 5000
+port = 1234
 
 socketClient.connect((host, port))
 
 p, q, n, phi = n_generation(28)
 print("n = ", n, "p = ", p, "q = ", q )
 
-pu, pr = keys_generation(n, phi)
+pu, pr = keys_generation(phi)
 print("pu = ", pu, "pr = ", pr )
 
 sendKey(socketClient, pu, n)
@@ -28,7 +28,7 @@ def receive():
     msg = ""
     while(msg != "exit"):
         msg = receiveMessage(socketClient, pr, n)
-        print("=> ", msg)
+        print("=> ", msg, flush=True)
 
 t1 = threading.Thread(target = send)
 t2 = threading.Thread(target = receive)

@@ -5,7 +5,7 @@ from utilities import *
 socketServer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 host = socket.gethostname()
-port = 5000
+port = 1234
 
 socketServer.bind((host, port))
 
