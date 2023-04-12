@@ -6,13 +6,13 @@ from utilities import *
 s = socket.socket()        
  
 # Define the port on which you want to connect
-port = 12345               
+port = 12346               
  
 # connect to the server on local computer
 s.connect(('127.0.0.1', port))
 
-n, phi = n_generation(28)
-print("n = ", n)
+p, q, n, phi = n_generation(28)
+print("n = ", n, "p = ", p, "q = ", q )
 
 pu, pr = keys_generation(n, phi)
 

@@ -110,7 +110,7 @@ def n_generation(n_bits):
     while p == q:
         q = number.getPrime(n_bits // 2)
         
-    return p*q , (p-1)*(q-1)
+    return p, q, p*q , (p-1)*(q-1)
 
 # p, q = n_generation(28)
 # print(p,q)
@@ -135,7 +135,7 @@ def printPrime(n):
     for i in range(2, n + 1):
         if isPrime(i):
             list.append(i)
-printPrime(226791289 // 2)
+# printPrime(226791289 // 2)
 
 ###########################################
 # attack plain-cipher pairs
@@ -147,5 +147,5 @@ def attack(plain, cipher, n, pu):
             if cipher == PowMod(plain, pu, new_n):
                 return x, y, sp.mod_inverse(pu,(x-1)*(y-1)), new_n
 
-x, y, pr, n = attack(encoding("hello"), 20265125, 226791289, 142671923)
-print("n = ", n)
+# x, y, pr, n = attack(encoding("hello"), 20265125, 226791289, 142671923)
+# print("n = ", n)
