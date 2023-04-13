@@ -20,7 +20,7 @@ conn2, address2 = socketServer.accept()
 # clients obtained before
 def send(fromConnection, toConnection):
     while(True):
-        data = fromConnection.recv(1024).decode()
+        data = fromConnection.recv(2048).decode()
         toConnection.send(data.encode())
 
 t1 = threading.Thread(target = send, args = (conn1, conn2))

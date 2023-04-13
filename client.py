@@ -1,6 +1,7 @@
 import socket
 import threading
 from utilities import *
+import time
 
 socketClient = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -20,13 +21,15 @@ pu_rec, n_rec = receiveKey(socketClient)
 
 def send():
     data = ""
-    while(data != "!exit"):
+    while(data != "exitt"):
         data = input()
+        time.sleep(0.01)
         sendCipher(socketClient, pu_rec, n_rec, data)
+        
 
 def receive():
     msg = ""
-    while(msg != "exit"):
+    while(msg != "exitt"):
         msg = receiveMessage(socketClient, pr, n)
         print("=> ", msg, flush=True)
 

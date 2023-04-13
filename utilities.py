@@ -87,14 +87,14 @@ def sendCipher(socket, pu, n, data):
         m = encoding(data[i:i+5])
         cipher = pow(m,pu,n)
         socket.send(str(cipher).encode())
-        
+  
 
 def receiveMessage(socket, pr, n):
-    len = int(float(socket.recv(1024).decode()))
+    len = int(float(socket.recv(2048).decode()))
 
     mes = ""
     for i in range(len):
-        cipher = int(float(socket.recv(1024).decode()))
+        cipher = int(float(socket.recv(2048).decode()))
         m = pow(cipher,pr,n)
         mes += decoding(m)
         
@@ -111,6 +111,6 @@ def sendKey(socket, pu, n):
 
 
 def receiveKey(socket):
-    pu_rec, n_rec = json.loads(socket.recv(1024).decode())
+    pu_rec, n_rec = json.loads(socket.recv(2048).decode())
     return pu_rec, n_rec
 
