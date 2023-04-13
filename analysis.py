@@ -46,6 +46,7 @@ def primeFactors(n):
         
     return list
 
+print(primeFactors(38607194709303653))
 
 def attack(pu, n):
     p, q = primeFactors(n)
