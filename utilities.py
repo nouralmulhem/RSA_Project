@@ -47,24 +47,6 @@ def encoding(list):
 
 
 ###########################################
-# calc power mod number for large numbers using eculidean algorithm
-###########################################
-def PowMod(a, n, mod): 
-    if n == 0:
-        return 1 % mod
-    elif n == 1:
-        return a % mod
-    else:
-        b = PowMod(a, n // 2, mod)
-        b = b * b % mod
-        if n % 2 == 0:
-          return b
-        else:
-          return b * a % mod
-        
-
-
-###########################################
 # generate encryption key from n and phi(n)
 ###########################################
 def keys_generation(phi_n):
@@ -103,7 +85,7 @@ def sendCipher(socket, pu, n, data):
 
     for i in range(0, len(data), 5):
         m = encoding(data[i:i+5])
-        cipher = PowMod(m,pu,n)
+        cipher = pow(m,pu,n)
         socket.send(str(cipher).encode())
         
 
@@ -113,7 +95,7 @@ def receiveMessage(socket, pr, n):
     mes = ""
     for i in range(len):
         cipher = int(float(socket.recv(1024).decode()))
-        m = PowMod(cipher,pr,n)
+        m = pow(cipher,pr,n)
         mes += decoding(m)
         
     return mes
