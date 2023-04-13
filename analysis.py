@@ -14,7 +14,7 @@ def encrypt(data, pu, n):
         
     for i in range(0, len(data), 5):
         m = encoding(data[i:i+5])
-        ciphers.append(PowMod(m,pu,n))
+        ciphers.append(pow(m,pu,n))
 
     return ciphers
 
@@ -22,7 +22,7 @@ def encrypt(data, pu, n):
 def decrypt(pr, n, ciphers):
     mes = ""
     for c in ciphers:
-        m = PowMod(c,pr,n)
+        m = pow(c,pr,n)
         mes += decoding(m)
         
     return mes
@@ -46,7 +46,7 @@ def primeFactors(n):
         
     return list
 
-print(primeFactors(38607194709303653))
+# print(primeFactors(38607194709303653))
 
 def attack(pu, n):
     p, q = primeFactors(n)
